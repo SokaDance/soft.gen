@@ -251,7 +251,7 @@ func [testMethodName/](t *testing.T) {
 // [testMethodName/] tests method [getterMethodName/]
 func [testMethodName/](t *testing.T) {
 	o := &[mockName/]{}
-	l := &[if not isEcorePackage(aClass.ePackage)]ecore.[/if][if isMapType()]MockEMap[else]MockEList[/if]{}
+	l := &[if not isEcorePackage(aClass.ePackage)]ecore.[/if][if isMapType()]MockEMap['['/][aStructuralFeature.eGenericType.generateMapTypeParameters(aClass.ePackage)/][']'/][else]MockEList['['/][aStructuralFeature.eGenericType.generateListTypeParameters(aClass.ePackage)/][']'/][/if]{}
 	// return a value
 	o.On("[getterMethodName/]").Once().Return(l)
 	o.On("[getterMethodName/]").Once().Return( func () [aStructuralFeature.generateType()/] {
