@@ -34,14 +34,17 @@
 package [aPackage.name/]
 
 [let refTypes : Set(EClassifier) = if isDiamond then aClass.eSuperTypes.getReferencedTypes()->asSet() else aClass.getReferencedTypes()->asSet() endif]
-[let ecorePackage : Set(String) = if not aPackage.isEcorePackage() and ( aClass.requiresList() or isDiamond ) then Set{ aPackage.getImportForPackage('ecore') } else Set{} endif]
-[let imports : OrderedSet(String) = Set { interfaceExtends->collect( extend | aPackage.getImportForType(extend))->asSet()
-                                        , refTypes->collect(cls | aPackage.getImport(cls))->asSet()
-										, ecorePackage
-                                        }->flatten()->select(s | s <> '')->asOrderedSet()->sortedBy(s | s)]
+[let mapType : Set(String) = if ( not aPackage.isEcorePackage() and aClass.requiresMap() ) then Set{ 'ecore.EMap' } else Set{} endif]
+[let listType : Set(String) = if ( not aPackage.isEcorePackage() and aClass.requiresList() or isDiamond ) then Set{ 'ecore.EList' } else Set{} endif]
+[let imports : OrderedSet(String) = Set { refTypes->collect(cls | aPackage.getImport(cls))->asSet()
+										, interfaceExtends->collect( extend | aPackage.getImportForType(extend))->asSet()
+										, listType->collect(cls | aPackage.getImportForType(cls))->asSet()
+										, mapType->collect(cls  | aPackage.getImportForType(cls))->asSet()
+										}->flatten()->select(s | s <> '')->asOrderedSet()->sortedBy(s | s)]
 [for ( i : String | imports )]
 import "[i/]"
 [/for]
+[/let]
 [/let]
 [/let]
 [/let]

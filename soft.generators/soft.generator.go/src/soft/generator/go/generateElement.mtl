@@ -16,5 +16,5 @@
 
 [query public getReferencedTypes(aClass : EClass) : Set(EClassifier) = 
 	OrderedSet{aClass.eSuperTypes
-              ,aClass.getImplementedFeatures()->select(feature : EStructuralFeature | not feature.many ).eType
+              ,aClass.getImplementedFeatures().eType
               ,aClass.getImplementedOperations().getReferencedTypes()}->flatten()->select( cls | not cls.oclIsUndefined() ) /]
