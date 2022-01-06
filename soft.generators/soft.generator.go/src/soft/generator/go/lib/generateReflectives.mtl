@@ -105,7 +105,7 @@
 [/template]
 
 [template private generateEGetDefinition(aClass : EClass)]
-[aClass.generateFunctionImplementationReceiver()/] EGetFromID(featureID int, resolve bool) interface{} {
+[aClass.generateFunctionImplementationReceiver()/] EGetFromID(featureID int, resolve bool) any {
     switch featureID {
     [for (anStructFeature : EStructuralFeature | aClass.getEGetFeatures()->asOrderedSet()->sortedBy(name))]
     case [aClass.getQualifiedIDName(anStructFeature)/]:
@@ -149,7 +149,7 @@
 [/template]
 
 [template private generateESetDefinition(aClass : EClass)]
-[aClass.generateFunctionImplementationReceiver()/] ESetFromID(featureID int, newValue interface{}) {
+[aClass.generateFunctionImplementationReceiver()/] ESetFromID(featureID int, newValue any) {
     switch featureID {
 [for (anStructFeature : EStructuralFeature | aClass.getESetFeatures()->sortedBy(name))]
     case [aClass.getQualifiedIDName(anStructFeature)/]:
@@ -162,7 +162,7 @@
         list.Clear()
         list.AddAll(newValue.([anStructFeature.generateType()/]))
     [else]
-        [aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getSetterName()/](newValue[if anStructFeature.eType.getType() <> 'interface{}'].([anStructFeature.generateType()/])[/if])
+        [aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getSetterName()/](newValue[if anStructFeature.eType.getType() <> 'any'].([anStructFeature.generateType()/])[/if])
     [/if]    
 [/for]
     default:
@@ -202,7 +202,7 @@
 
 [template private generateEInvokeDefinition(aClass : EClass)]
 [let aPackage : EPackage = aClass.ePackage]
-[aClass.generateFunctionImplementationReceiver()/] EInvokeFromID(operationID int, arguments [if not aPackage.isEcorePackage()]ecore.[/if]EList) interface{} {
+[aClass.generateFunctionImplementationReceiver()/] EInvokeFromID(operationID int, arguments [if not aPackage.isEcorePackage()]ecore.[/if]EList) any {
     switch operationID {
     [for ( eOperation : EOperation | aClass.getEInvokeOperations()->sortedBy( getOperationName() ) )]
     case [aClass.getQualifiedIDName(eOperation)/]:

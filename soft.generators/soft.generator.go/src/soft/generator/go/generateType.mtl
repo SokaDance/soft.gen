@@ -67,7 +67,7 @@
 [/let]
 [/let]
 [else]
-interface{}
+any
 [/if]
 [/template]
 
@@ -99,7 +99,7 @@ interface{}
 		Sequence{ 'java.lang.Double', 'java.math.BigDecimal', 'double', 'float64' , '0.0' , '3.5' , ''},
 		Sequence{ 'java.lang.Float' , 'float' , 'float32' , '0.0', '1.2', ''},
 		Sequence{ 'java.lang.Class' , 'reflect.Type', 'nil', 'reflect.TypeOf("")', ''},
-		Sequence{ 'java.lang.Object', 'interface{}', 'nil', 'nil', ''},
+		Sequence{ 'java.lang.Object', 'any', 'nil', 'nil', ''},
 		Sequence{ 'java.lang.Long' , 'java.math.BigInteger', 'long' , 'int64' , '0', '45' , ''},
         Sequence{ 'java.util.Map' , 'ecore.EMap', 'nil', 'nil' , ''},
         Sequence{ 'java.util.Map$Entry' , 'ecore.EMapEntry', 'nil' , 'nil', ''},
@@ -109,9 +109,9 @@ interface{}
 
 		Sequence{ 'org.eclipse.emf.common.util.DiagnosticChain', 'ecore.EDiagnosticChain', 'nil', 'nil', '' },
 		Sequence{ 'org.eclipse.emf.common.util.EList', 'ecore.EList', 'nil', 'ecore.NewEmptyBasicEList()', '' },
-		Sequence{ 'org.eclipse.emf.common.util.Enumerator', 'interface{}', 'nil', 'nil', ''},		        
-		Sequence{ 'org.eclipse.emf.ecore.util.FeatureMap', 'interface{}', 'nil', 'nil', ''},
-        Sequence{ 'org.eclipse.emf.ecore.util.FeatureMap$Entry', 'interface{}', 'nil', 'nil', ''},
+		Sequence{ 'org.eclipse.emf.common.util.Enumerator', 'any', 'nil', 'nil', ''},		        
+		Sequence{ 'org.eclipse.emf.ecore.util.FeatureMap', 'any', 'nil', 'nil', ''},
+        Sequence{ 'org.eclipse.emf.ecore.util.FeatureMap$Entry', 'any', 'nil', 'nil', ''},
         Sequence{ 'org.eclipse.emf.ecore.resource.Resource', 'ecore.EResource', 'nil' , 'nil', '' },
         Sequence{ 'org.eclipse.emf.ecore.resource.ResourceSet', 'ecore.EResourceSet', 'nil' , 'nil', '' },
 		Sequence{ 'org.eclipse.emf.common.util.TreeIterator', 'ecore.EIterator', 'nil' , 'nil', '' }
@@ -191,7 +191,7 @@ interface{}
 /]
 
 [query public getType( aClassifier : EClassifier ) : String = 
-    if aClassifier.oclIsUndefined() then 'interface{}'
+    if aClassifier.oclIsUndefined() then 'any'
     else if aClassifier.oclIsKindOf( EClass ) then aClassifier.oclAsType(EClass).getType()
     else if aClassifier.oclIsKindOf( EEnum ) then aClassifier.oclAsType(EEnum).getType()
     else if aClassifier.oclIsKindOf( EDataType ) then aClassifier.oclAsType(EDataType).getType()
