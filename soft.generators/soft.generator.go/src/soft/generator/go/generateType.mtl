@@ -24,42 +24,42 @@
 [if aElement.oclIsUndefined() or aElement.eGenericType.oclIsUndefined()]
 [else]
 [let aPackage : EPackage = aElement.getEPackage()]
-[let aDataType : EGenericType = aElement.eGenericType]
+[let aType : EGenericType = aElement.eGenericType]
 [if (aElement.isMapType())]
-[getShortQualifiedName('ecore.EMap', aPackage.name )/]['['/][aDataType.generateMapKeyType(aPackage)/],[aDataType.generateMapValueType(aPackage)/][']'/]
+[getShortQualifiedName('ecore.EMap', aPackage.name )/]['['/][aType.generateMapKeyType(aPackage)/],[aType.generateMapValueType(aPackage)/][']'/]
 [elseif aElement.isListType()]
-[getShortQualifiedName('ecore.EList', aPackage.name )/]['['/][aDataType.generateListTypeParameters(aPackage)/][']'/]
+[getShortQualifiedName('ecore.EList', aPackage.name )/]['['/][aType.generateListTypeParameters(aPackage)/][']'/]
 [else]
-[aElement.eGenericType.generateType(aPackage)/][if aDataType.eClassifier.name <> 'EJavaClass' and aDataType.eTypeArguments->notEmpty()]['['/][for (g : EGenericType | aDataType.eTypeArguments) separator (',')][getShortQualifiedName(g.eClassifier.getType(),aPackage.name)/][/for][']'/][/if]
+[aType.generateType(aPackage)/]
 [/if]
 [/let]
 [/let]
 [/if]
 [/template]
 
-[template public generateListTypeParameters(anEDataType : EGenericType, aPackage : EPackage) post(trim())]
-[anEDataType.generateType(aPackage)/]
+[template public generateListTypeParameters(anEGenericType : EGenericType, aPackage : EPackage) post(trim())]
+[anEGenericType.generateType(aPackage)/]
 [/template]
 
-[template public generateMapTypeParameters(anEDataType : EGenericType, aPackage : EPackage ) post(trim())]
-[anEDataType.generateMapKeyType(aPackage)/],[anEDataType.generateMapValueType(aPackage)/]	
+[template public generateMapTypeParameters(anEGenericType : EGenericType, aPackage : EPackage ) post(trim())]
+[anEGenericType.generateMapKeyType(aPackage)/],[anEGenericType.generateMapValueType(aPackage)/]	
 [/template]
 
-[template private generateMapKeyType(anEDataType : EGenericType, aPackage : EPackage) post(trim())]
-[anEDataType.generateMapTypeParameter(aPackage,1,'key')/]
+[template private generateMapKeyType(anEGenericType : EGenericType, aPackage : EPackage) post(trim())]
+[anEGenericType.generateMapTypeParameter(aPackage,1,'key')/]
 [/template]
 
-[template private generateMapValueType(anEDataType : EGenericType, aPackage : EPackage) post(trim())]
-[anEDataType.generateMapTypeParameter(aPackage,2,'value')/]
+[template private generateMapValueType(anEGenericType : EGenericType, aPackage : EPackage) post(trim())]
+[anEGenericType.generateMapTypeParameter(aPackage,2,'value')/]
 [/template]
 
-[template private generateMapTypeParameter(anEDataType : EGenericType, aPackage : EPackage, index : Integer, featureName : String) post(trim())]
-[if anEDataType.eTypeArguments->size() = 2]
-[let keyType : EGenericType = anEDataType.eTypeArguments->at(index)]
+[template private generateMapTypeParameter(anEGenericType : EGenericType, aPackage : EPackage, index : Integer, featureName : String) post(trim())]
+[if anEGenericType.eTypeArguments->size() = 2]
+[let keyType : EGenericType = anEGenericType.eTypeArguments->at(index)]
 [getShortQualifiedName(keyType.eClassifier.getType(),aPackage.name)/]
 [/let]
-[elseif anEDataType.eClassifier.oclIsKindOf(EClass) and anEDataType.eClassifier.oclAsType(EClass).isMapEntry()]
-[let mapEntryClass : EClass = anEDataType.eClassifier.oclAsType(EClass)]
+[elseif anEGenericType.eClassifier.oclIsKindOf(EClass) and anEGenericType.eClassifier.oclAsType(EClass).isMapEntry()]
+[let mapEntryClass : EClass = anEGenericType.eClassifier.oclAsType(EClass)]
 [let keyFeature : EStructuralFeature = mapEntryClass.getEStructuralFeature(featureName)]
 [let keyType : EGenericType = keyFeature.eGenericType]
 [getShortQualifiedName(keyType.eClassifier.getType(),aPackage.name)/]
@@ -71,10 +71,12 @@ any
 [/if]
 [/template]
 
-[template public generateType(anEDataType : EGenericType, aPackage : EPackage ) post (trim())]
-[if (anEDataType.oclIsUndefined() or anEDataType.eClassifier.oclIsUndefined())]
+[template public generateType(anEGenericType : EGenericType, aPackage : EPackage ) post (trim())]
+[if anEGenericType.oclIsUndefined()]
+[elseif anEGenericType.eClassifier.oclIsUndefined()]
+any
 [else]
-[getShortQualifiedName(anEDataType.eClassifier.getType(), aPackage.name )/]
+[getShortQualifiedName(anEGenericType.eClassifier.getType(), aPackage.name )/][if anEGenericType.eClassifier.name <> 'EJavaClass' and anEGenericType.eTypeArguments->notEmpty()]['['/][for (g : EGenericType | anEGenericType.eTypeArguments) separator (',')][getShortQualifiedName(g.eClassifier.getType(),aPackage.name)/][/for][']'/][/if]
 [/if]
 [/template]
 
@@ -86,35 +88,33 @@ any
 [for (sParameter : EParameter | aOperation.eParameters) separator (', ')][sParameter.name/][/for]
 [/template]
 
-
-
 [comment {ecore types..., go type, default value, test value, comparison operator}/]
 [query private getAllDataTypes(o : OclAny) : Sequence( Sequence( String ) ) = 
     Sequence {
         Sequence{ 'java.lang.Boolean', 'boolean', 'bool', 'false' , 'true', ''},
-        Sequence{ 'java.lang.Integer', 'int' , '0', '45' , ''},
+        Sequence{ 'java.lang.Integer', 'int' , '0', 'int(45)' , ''},
 		Sequence{ 'java.lang.Byte','java.lang.Character', 'char', 'byte' ,'\'\'', '\'a\'', ''},
-		Sequence{ 'byte[]','[]byte' , 'nil', 'nil' , ''},
+		Sequence{ 'byte[]','[]byte' , 'nil', '[]byte{}' , ''},
 		Sequence{ 'java.util.Date', '*time.Time', 'nil', 'func() *time.Time { t := time.Now(); return &t }()' , ''},
-		Sequence{ 'java.lang.Double', 'java.math.BigDecimal', 'double', 'float64' , '0.0' , '3.5' , ''},
-		Sequence{ 'java.lang.Float' , 'float' , 'float32' , '0.0', '1.2', ''},
+		Sequence{ 'java.lang.Double', 'java.math.BigDecimal', 'double', 'float64' , '0.0' , 'float64(3.5)' , ''},
+		Sequence{ 'java.lang.Float' , 'float' , 'float32' , '0.0', 'float32(1.2)', ''},
 		Sequence{ 'java.lang.Class' , 'reflect.Type', 'nil', 'reflect.TypeOf("")', ''},
-		Sequence{ 'java.lang.Object', 'any', 'nil', 'nil', ''},
-		Sequence{ 'java.lang.Long' , 'java.math.BigInteger', 'long' , 'int64' , '0', '45' , ''},
-        Sequence{ 'java.util.Map' , 'ecore.EMap', 'nil', 'nil' , ''},
-        Sequence{ 'java.util.Map$Entry' , 'ecore.EMapEntry', 'nil' , 'nil', ''},
-		Sequence{ 'java.lang.Short' , 'short' , 'int16' , '0', '2' , ''},
+		Sequence{ 'java.lang.Object', 'any', 'nil', 'any(nil)', ''},
+		Sequence{ 'java.lang.Long' , 'java.math.BigInteger', 'long' , 'int64' , '0', 'int63(45)' , ''},
+        Sequence{ 'java.util.Map' , 'ecore.EMap', 'nil', '&ecore.MockEMap[{0},{1}]{}' , ''},
+        Sequence{ 'java.util.Map$Entry' , 'ecore.EMapEntry', 'nil' , '&ecore.MockEMapEntry[{0},{1}]{}', ''},
+		Sequence{ 'java.lang.Short' , 'short' , 'int16' , '0', 'int16(2)' , ''},
         Sequence{ 'java.lang.String' , 'string', '""' , '"Test String"', ''},
 		
 
-		Sequence{ 'org.eclipse.emf.common.util.DiagnosticChain', 'ecore.EDiagnosticChain', 'nil', 'nil', '' },
-		Sequence{ 'org.eclipse.emf.common.util.EList', 'ecore.EList', 'nil', 'ecore.NewEmptyBasicEList()', '' },
+		Sequence{ 'org.eclipse.emf.common.util.DiagnosticChain', 'ecore.EDiagnosticChain', 'nil', '&ecore.MockEDiagnosticChain[{0}]{}', '' },
+		Sequence{ 'org.eclipse.emf.common.util.EList', 'ecore.EList', 'nil', '&ecore.MockEList[{0}]{}', '' },
 		Sequence{ 'org.eclipse.emf.common.util.Enumerator', 'any', 'nil', 'nil', ''},		        
 		Sequence{ 'org.eclipse.emf.ecore.util.FeatureMap', 'any', 'nil', 'nil', ''},
         Sequence{ 'org.eclipse.emf.ecore.util.FeatureMap$Entry', 'any', 'nil', 'nil', ''},
-        Sequence{ 'org.eclipse.emf.ecore.resource.Resource', 'ecore.EResource', 'nil' , 'nil', '' },
-        Sequence{ 'org.eclipse.emf.ecore.resource.ResourceSet', 'ecore.EResourceSet', 'nil' , 'nil', '' },
-		Sequence{ 'org.eclipse.emf.common.util.TreeIterator', 'ecore.EIterator', 'nil' , 'nil', '' }
+        Sequence{ 'org.eclipse.emf.ecore.resource.Resource', 'ecore.EResource', 'nil' , '&ecore.MockEResource{}', '' },
+        Sequence{ 'org.eclipse.emf.ecore.resource.ResourceSet', 'ecore.EResourceSet', 'nil' , '&ecore.MockEResourceSet{}', '' },
+		Sequence{ 'org.eclipse.emf.common.util.TreeIterator', 'ecore.EIterator', 'nil' , '&ecore.MockEIterator[{0}]{}', '' }
     }
 /]
 
@@ -148,21 +148,41 @@ any
 	endif
 /] 
 
-[query public getTestValue(aClassifier : EClassifier,aPackage : EPackage) : String =
+[template public generateTestValue(aElement : ETypedElement , aPackage : EPackage) post (trim())]
+[if aElement.oclIsUndefined() or aElement.eGenericType.oclIsUndefined()]
+[else]
+[let aPackage : EPackage = aElement.getEPackage()]
+[let aType : EGenericType = aElement.eGenericType]
+[if (aElement.isMapType())]
+[getShortQualifiedName('ecore.MockEMap', aPackage.name )/]['['/][aType.generateMapKeyType(aPackage)/],[aType.generateMapValueType(aPackage)/][']'/]
+[elseif aElement.isListType()]
+[getShortQualifiedName('ecore.MockEList', aPackage.name )/]['['/][aType.generateListTypeParameters(aPackage)/][']'/]
+[else]
+[aType.generateTestValue(aPackage)/]
+[/if]
+[/let]
+[/let]
+[/if]
+[/template]
+
+[template public generateTestValue(anEGenericType : EGenericType, aPackage : EPackage ) post (trim())]
+[if (anEGenericType.oclIsUndefined() or anEGenericType.eClassifier.oclIsUndefined())]
+[else]
+[format(anEGenericType.eClassifier.getTestValue(aPackage),anEGenericType.eTypeArguments->collect(p | p.generateType(aPackage)))/]
+[/if]
+[/template]
+
+[query private getTestValue(aClassifier : EClassifier,aPackage : EPackage) : String =
 	if aClassifier.oclIsUndefined() then 'nil'
     else if aClassifier.oclIsKindOf( EClass ) then aClassifier.oclAsType(EClass).getTestValue(aPackage)
     else if aClassifier.oclIsKindOf( EEnum ) then aClassifier.oclAsType(EEnum).getTestValue(aPackage)
-    else if aClassifier.oclIsKindOf( EDataType ) then 
-		let t : String = aClassifier.getType() in
-		let v : String = aClassifier.oclAsType(EDataType).getTestValue(aPackage) in
-		let isPtr : Boolean = t.size() > 0 and t.first(1) = '*' in
-		(if isPtr then '(' else '' endif) + getShortQualifiedName(aClassifier.getType(),aPackage.name) + (if isPtr then ')' else '' endif) + '(' + getShortQualifiedName(v,aPackage.name) + ')'
-    else '' endif endif endif endif	
+    else if aClassifier.oclIsKindOf( EDataType ) then aClassifier.oclAsType(EDataType).getTestValue(aPackage)
+	else '' endif endif endif endif	
 /]
 
 [query private getTestValue( aClass : EClass ,aPackage : EPackage ) : String = 
 	let qualifiedMockName : String = if aClass.name='EObject' then 'ecore.MockEObjectInternal' else aClass.getQualifiedMockName() endif in 
-	'new(' + getShortQualifiedName( qualifiedMockName , aPackage.name ) +')'
+	'&' + getShortQualifiedName( qualifiedMockName , aPackage.name ) + '{}'
 /]
 
 [query private getTestValue( aEnum : EEnum ,aPackage : EPackage ) : String =
@@ -179,8 +199,8 @@ any
 	    getAllDataTypes()->iterate( s ; res : String = '' |
 	    if res = '' then
 	        if s->exists(n : String | n = typeName) then
-				getShortQualifiedName(s->at( s->size() - 1 ) , aPackage.name)
-	        else
+				getShortValue(s->at( s->size() - 1 ) , aPackage.name)
+			else
 				res
 	        endif
 	    else 
@@ -188,6 +208,10 @@ any
 	    endif
 	 	) 
 	endif
+/]
+
+[query private getShortValue( any : OclAny , aValue : String , aPackageName : String) : String =
+	aValue.replace(aPackageName + '.', '')	
 /]
 
 [query public getType( aClassifier : EClassifier ) : String = 

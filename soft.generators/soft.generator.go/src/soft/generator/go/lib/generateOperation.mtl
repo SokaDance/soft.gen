@@ -70,7 +70,7 @@
 func [testMethodName/](t *testing.T) {
 	o := &[mockName/]{}
 [for (aParameter : EParameter | aOperation.eParameters)]
-	[aParameter.name/] := [aParameter.eType.getTestValue(aClass.ePackage)/]
+	[aParameter.name/] := [aParameter.generateTestValue(aClass.ePackage)/]
 [/for]
 	o.On("[methodName/]",[aOperation.generateParameterCall()/]).Once()	
 	o.[methodName/]([aOperation.generateParameterCall()/])
@@ -90,9 +90,9 @@ func [testMethodName/](t *testing.T) {
 func [testMethodName/](t *testing.T) {
 	o := &[mockName/]{}
 [for (aParameter : EParameter | aOperation.eParameters)]
-	[aParameter.name/] := [aParameter.eType.getTestValue(aPackage)/]
+	[aParameter.name/] := [aParameter.generateTestValue(aPackage)/]
 [/for]
-	r := [aOperation.eGenericType.eClassifier.getTestValue(aPackage)/]
+	r := [aOperation.generateTestValue(aPackage)/]
 	o.On("[methodName/]",[aOperation.generateParameterCall()/]).Return(r).Once()	
 	o.On("[methodName/]",[aOperation.generateParameterCall()/]).Return( func () [aOperation.generateType()/] {
 		return r

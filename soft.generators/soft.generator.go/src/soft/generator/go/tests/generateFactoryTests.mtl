@@ -67,7 +67,7 @@ func TestFactoryCreate[aClass.name/](t *testing.T) {
 [for(aReference:EReference | ref->sortedBy(name))]
 func TestFactoryCreate[aClass.name/]From[aReference.name.toUpperFirst()/]Container(t *testing.T) {
 	factory := new[ePackage.name.toUpperFirst()/]FactoryImpl()
-	mockContainer := [aReference.eType.getTestValue(aClass.ePackage)/]
+	mockContainer := [aReference.generateTestValue(aClass.ePackage)/]
 [if(aReference.eOpposite.upperBound <> 1)]
 	mockList := new([if not ePackage.isEcorePackage()]ecore.[/if]MockEList)
 	mockList.On("Add",mock.Anything).Return(true).Once()
@@ -82,7 +82,7 @@ func TestFactoryCreate[aClass.name/]From[aReference.name.toUpperFirst()/]Contain
 [if(aClass.getElementIDAccessorName().size() > 0)]
 func TestFactoryCreate[aClass.name/]From[aReference.name.toUpperFirst()/]ContainerAndClassID(t *testing.T) {
 		factory := new[ePackage.name.toUpperFirst()/]FactoryImpl()
-	mockContainer := [aReference.eType.getTestValue(aClass.ePackage)/]
+	mockContainer := [aReference.generateTestValue(aClass.ePackage)/]
 [if(aReference.eOpposite.upperBound <> 1)]
 	mockList := new([if not ePackage.isEcorePackage()]ecore.[/if]MockEList)
 	mockList.On("Add",mock.Anything).Return(true).Once()
