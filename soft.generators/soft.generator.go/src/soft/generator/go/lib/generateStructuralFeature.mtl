@@ -49,7 +49,7 @@
 
 [template private getMapConstructor( aStructuralFeature : EStructuralFeature, aClass : EClass) post(trim())]
 [let aPackage : EPackage = aClass.ePackage]
-[if not aPackage.isEcorePackage()]ecore.[/if]NewBasicEObjectMap([if aStructuralFeature.eType.ePackage.name <> aPackage.name][aStructuralFeature.eType.ePackage.name/].[/if]GetPackage().[aStructuralFeature.eType.getReflectiveGetterName()/]())
+[if not aPackage.isEcorePackage()]ecore.[/if]NewBasicEObjectMap['['/][aStructuralFeature.eGenericType.generateMapTypeParameters(aPackage)/]([if aStructuralFeature.eType.ePackage.name <> aPackage.name][aStructuralFeature.eType.ePackage.name/].[/if]GetPackage().[aStructuralFeature.eType.getReflectiveGetterName()/]())
 [/let]
 [/template]
 
@@ -59,7 +59,7 @@
 [template private getListConstructor( anEAttribute : EAttribute , aClass : EClass ) ? (not anEAttribute.isFeatureMapType()) post(trim()) ]
 [let aPackage : EPackage = aClass.ePackage]
 [let receiverName : String = aClass.getReceiverName()]
-[if not aPackage.isEcorePackage()]ecore[/if].NewBasicEDataTypeList([receiverName/].AsEObjectInternal() , [aClass.getFeatureIDName(anEAttribute)/],[anEAttribute.unique/])
+[if not aPackage.isEcorePackage()]ecore[/if].NewBasicEDataTypeList['['/][anEAttribute.eGenericType.generateListTypeParameters(aPackage)/][']'/]([receiverName/].AsEObjectInternal() , [aClass.getFeatureIDName(anEAttribute)/],[anEAttribute.unique/])
 [/let]
 [/let]
 [/template]
@@ -74,23 +74,23 @@ nil
 [let receiverName : String = aClass.getReceiverName()]
 [if (anEReference.containment)]
     [if anEReference.eOpposite.oclIsUndefined() ]
-[if not aPackage.isEcorePackage()]ecore.[/if]NewBasicEObjectList([receiverName/].AsEObjectInternal() , [aClass.getFeatureIDName(anEReference)/] , -1, true , true , false , [anEReference.isProxy()/] , [anEReference.isUnSettable()/] )
+[if not aPackage.isEcorePackage()]ecore.[/if]NewBasicEObjectList['['/][anEReference.eGenericType.generateListTypeParameters(aPackage)/][']'/]([receiverName/].AsEObjectInternal() , [aClass.getFeatureIDName(anEReference)/] , -1, true , true , false , [anEReference.isProxy()/] , [anEReference.isUnSettable()/] )
     [else]
         [let reverseFeature :EReference = anEReference.eOpposite ]
         [let reverseClass :EClass = reverseFeature.eContainingClass ]
-[if not aPackage.isEcorePackage()]ecore.[/if]NewBasicEObjectList([receiverName/].AsEObjectInternal() , [aClass.getFeatureIDName(anEReference)/] , [reverseClass.getFeatureIDName(reverseFeature)/], true , true , true , [anEReference.isProxy()/] , [anEReference.isUnSettable()/] )
+[if not aPackage.isEcorePackage()]ecore.[/if]NewBasicEObjectList['['/][anEReference.eGenericType.generateListTypeParameters(aPackage)/][']'/]([receiverName/].AsEObjectInternal() , [aClass.getFeatureIDName(anEReference)/] , [reverseClass.getFeatureIDName(reverseFeature)/], true , true , true , [anEReference.isProxy()/] , [anEReference.isUnSettable()/] )
         [/let]
         [/let]
     [/if]
 [else]
     [if anEReference.eOpposite.oclIsUndefined() ]
         [let featureID : String = anEReference.eContainingClass.getFeatureIDName( anEReference )]
-[if not aPackage.isEcorePackage()]ecore.[/if]NewBasicEObjectList([receiverName/].AsEObjectInternal() , [featureID/] , -1 , false , false , false , [anEReference.isProxy()/] , [anEReference.isUnSettable()/] )
+[if not aPackage.isEcorePackage()]ecore.[/if]NewBasicEObjectList['['/][anEReference.eGenericType.generateListTypeParameters(aPackage)/][']'/]([receiverName/].AsEObjectInternal() , [featureID/] , -1 , false , false , false , [anEReference.isProxy()/] , [anEReference.isUnSettable()/] )
         [/let]
     [else]
         [let reverseFeature :EReference = anEReference.eOpposite ]
         [let reverseClass :EClass = reverseFeature.eContainingClass ]
-[if not aPackage.isEcorePackage()]ecore.[/if]NewBasicEObjectList([receiverName/].AsEObjectInternal() , [aClass.getFeatureIDName(anEReference)/] , [reverseClass.getFeatureIDName(reverseFeature)/] , false , true , true , [anEReference.isProxy()/] , [anEReference.isUnSettable()/]  )
+[if not aPackage.isEcorePackage()]ecore.[/if]NewBasicEObjectList['['/][anEReference.eGenericType.generateListTypeParameters(aPackage)/][']'/]([receiverName/].AsEObjectInternal() , [aClass.getFeatureIDName(anEReference)/] , [reverseClass.getFeatureIDName(reverseFeature)/] , false , true , true , [anEReference.isProxy()/] , [anEReference.isUnSettable()/]  )
         [/let]
         [/let]
     [/if]
