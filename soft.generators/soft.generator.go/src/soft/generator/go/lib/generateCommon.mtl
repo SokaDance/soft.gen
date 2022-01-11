@@ -50,7 +50,7 @@ func ([aClass.getReceiverName()/] *[aClass.getMockName()/])
 	if ( aClass.isMapEntry() ) then
 		let keyFeature : EStructuralFeature = aClass.getEStructuralFeature('key') in
 		let valueFeature : EStructuralFeature = aClass.getEStructuralFeature('value') in
-		Sequence{'ecore.EMapEntry[' +  keyFeature.generateType() + ',' + valueFeature.generateType() + ']'}
+		Sequence{'ecore.EObject','ecore.EMapEntry[' +  keyFeature.generateType() + ',' + valueFeature.generateType() + ']'}
     else if ( aClass.eSuperTypes->isEmpty() ) then
         if ( aClass.name = 'EObject' ) then
             Sequence{'ecore.ENotifier'}
