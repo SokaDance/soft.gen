@@ -111,13 +111,15 @@
     case [aClass.getQualifiedIDName(anStructFeature)/]:
 	[if anStructFeature.isProxy()]
 		[if anStructFeature.isListType()]
+		[let aPackage : EPackage = aClass.ePackage]
 		list := [aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getGetterName()/]();
 		if !resolve {
-			if objects , _ := list.([if not aClass.ePackage.isEcorePackage()]ecore.[/if]EObjectList); objects != nil {
+			if objects , _ := list.([if not aPackage.isEcorePackage()]ecore.[/if]EObjectList['['/][anStructFeature.eGenericType.generateListTypeParameters(aPackage)/][']'/]); objects != nil {
 				return objects.GetUnResolvedList()
 			}
 		}
 		return list
+		[/let]
 		[else]
 		if resolve {
 			return [aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getGetterName()/]()
@@ -153,11 +155,7 @@
     switch featureID {
 [for (anStructFeature : EStructuralFeature | aClass.getESetFeatures()->sortedBy(name))]
     case [aClass.getQualifiedIDName(anStructFeature)/]:
-	[if anStructFeature.isMapType()]
-		m := [aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getGetterName()/]()
-		m.Clear()
-		m.AddAll(newValue.([if not aClass.ePackage.isEcorePackage()]ecore.[/if]EList))
-    [elseif anStructFeature.isListType()]
+	[if anStructFeature.isListType()]
 		list := [aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getGetterName()/]()
         list.Clear()
         list.AddAll(newValue.([anStructFeature.generateType()/]))
