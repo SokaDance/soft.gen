@@ -105,27 +105,27 @@
 [/template]
 
 [template private generateEGetDefinition(aClass : EClass)]
+[let aPackage : EPackage = aClass.ePackage]
+[let ecorePrefix : String = if not aPackage.isEcorePackage() then 'ecore.' else '' endif]
 [aClass.generateFunctionImplementationReceiver()/] EGetFromID(featureID int, resolve bool) any {
     switch featureID {
     [for (anStructFeature : EStructuralFeature | aClass.getEGetFeatures()->asOrderedSet()->sortedBy(name))]
     case [aClass.getQualifiedIDName(anStructFeature)/]:
 	[if anStructFeature.isProxy()]
 		[if anStructFeature.isListType()]
-		[let aPackage : EPackage = aClass.ePackage]
-		list := [aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getGetterName()/]();
+		list := [aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getGetterName()/]().([ecorePrefix/]EObjectList['['/][anStructFeature.eGenericType.generateListTypeParameters(aPackage)/][']'/]);
 		if !resolve {
-			if objects , _ := list.([if not aPackage.isEcorePackage()]ecore.[/if]EObjectList['['/][anStructFeature.eGenericType.generateListTypeParameters(aPackage)/][']'/]); objects != nil {
-				return objects.GetUnResolvedList()
-			}
+			list = list.GetUnResolvedList()
 		}
-		return list
-		[/let]
+		return [ecorePrefix/]ToAnyObjectList(list)
 		[else]
 		if resolve {
 			return [aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getGetterName()/]()
 		}
 		return  [aClass.getReceiverName()/].basic[anStructFeature.getGetterName().toUpperFirst()/]()
 		[/if]		
+	[elseif anStructFeature.isListType() and not anStructFeature.isMapType()]
+		return [ecorePrefix/]ToAnyList([aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getGetterName()/]())
 	[else] 
         return [aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getGetterName()/]()
 	[/if]
@@ -134,6 +134,8 @@
         return [aClass.getReceiverName()/].[getUnQualifiedName(aClass.getClassExtends())/].EGetFromID(featureID, resolve)
     }
 }
+[/let]
+[/let]
 [/template]
 
 
@@ -156,9 +158,11 @@
 [for (anStructFeature : EStructuralFeature | aClass.getESetFeatures()->sortedBy(name))]
     case [aClass.getQualifiedIDName(anStructFeature)/]:
 	[if anStructFeature.isListType()]
-		list := [aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getGetterName()/]()
-        list.Clear()
-        list.AddAll(newValue.([anStructFeature.generateType()/]))
+		[let var : String = if anStructFeature.isMapType() then 'm' else 'l' endif] 
+		[var/] := [aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getGetterName()/]()
+        [var/].Clear()
+        [var/].AddAll(newValue.([anStructFeature.generateType()/]))
+		[/let]
     [else]
         [aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getSetterName()/](newValue[if anStructFeature.eType.getType() <> 'any'].([anStructFeature.generateType()/])[/if])
     [/if]    
