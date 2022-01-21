@@ -48,9 +48,7 @@ func ([aClass.getReceiverName()/] *[aClass.getMockName()/])
 [query public getInterfaceExtends(aClass : EClass ) : Sequence(String) =
 	let aPackage : EPackage = aClass.ePackage in 
 	if ( aClass.isMapEntry() ) then
-		let keyFeature : EStructuralFeature = aClass.getEStructuralFeature('key') in
-		let valueFeature : EStructuralFeature = aClass.getEStructuralFeature('value') in
-		Sequence{'ecore.EObject','ecore.EMapEntry[' +  keyFeature.generateType() + ',' + valueFeature.generateType() + ']'}
+		Sequence{'ecore.EObject','ecore.EMapEntry'}
     else if ( aClass.eSuperTypes->isEmpty() ) then
         if ( aClass.name = 'EObject' ) then
             Sequence{'ecore.ENotifier'}

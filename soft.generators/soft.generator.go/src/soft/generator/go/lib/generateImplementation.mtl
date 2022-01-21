@@ -23,6 +23,11 @@
 [import soft::generator::go::lib::generateStructuralFeature/]
 [import soft::generator::go::lib::generateReflectives/]
 
+[query private isAnyType(aTypedElement : ETypedElement) : Boolean = 
+	let type : String = aTypedElement.eType.getType() in
+	type = 'any' or type = 'interface{}'
+/]
+
 [template public generateImplementation(aClass : EClass) { 
 	implementationName : String = aClass.getImplementationName(); 
 	aPackage : EPackage = aClass.ePackage; 
@@ -105,7 +110,7 @@ func [aClass.getConstructorName()/]() *[aClass.getImplementationName()/] {
 
 [aClass.generateFunctionImplementationReceiver()/] SetKey(key interface{}) {
 [let anStructFeature : EStructuralFeature =  aClass.getEStructuralFeature('key')]
-    [aClass.getReceiverName()/].[anStructFeature.getSetterName()/](key[if anStructFeature.eType.getType() <> 'interface{}'].([anStructFeature.generateType()/])[/if])
+    [aClass.getReceiverName()/].[anStructFeature.getSetterName()/](key[if not isAnyType(anStructFeature)].([anStructFeature.generateType()/])[/if])
 [/let]
 }
 
@@ -115,7 +120,7 @@ func [aClass.getConstructorName()/]() *[aClass.getImplementationName()/] {
 
 [aClass.generateFunctionImplementationReceiver()/] SetValue(value interface{}) {
 [let anStructFeature : EStructuralFeature =  aClass.getEStructuralFeature('value')]
-    [aClass.getReceiverName()/].[anStructFeature.getSetterName()/](value[if anStructFeature.eType.getType() <> 'interface{}'].([anStructFeature.generateType()/])[/if])
+    [aClass.getReceiverName()/].[anStructFeature.getSetterName()/](value[if not isAnyType(anStructFeature)].([anStructFeature.generateType()/])[/if])
 [/let]
 }
 [/if]
