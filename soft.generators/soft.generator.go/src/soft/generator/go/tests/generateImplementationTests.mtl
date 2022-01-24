@@ -888,7 +888,7 @@ func Test[aClass.name.toUpperFirst()/]EUnsetFromID(t *testing.T) {
 		[if anStructFeature.isListType()]
 		v := o.EGetFromID([aClass.getQualifiedIDName(anStructFeature)/], false)
 		assert.NotNil(t,v)
-		l := v.([if not aClass.ePackage.isEcorePackage()]ecore.[/if]EList)
+		l := v.([if not aClass.ePackage.isEcorePackage()]ecore.[/if]EList['['/]any[']'/])
 		assert.True(t,l.Empty())
 		[elseif anStructFeature.oclIsKindOf(EReference)]
 		assert.Nil(t,o.EGetFromID([aClass.getQualifiedIDName(anStructFeature)/], false))
@@ -938,7 +938,7 @@ func Test[aClass.name.toUpperFirst()/]EBasicInverseAdd(t *testing.T) {
 
 [template private generateFeatureEInverseAddTestImplementation( aStructuralFeature : EStructuralFeature, aClass : EClass ) ?(isListType())]
 {
-	mockObject := [aStructuralFeature.generateTestValue(aClass.ePackage)/]
+	mockObject := [aStructuralFeature.eGenericType.generateTestValue(aClass.ePackage)/]
 	o.EBasicInverseAdd(mockObject,[aClass.getQualifiedIDName(aStructuralFeature)/],nil)
 	l := o.[aStructuralFeature.getGetterName()/]()
 	assert.True(t, l.Contains(mockObject))
@@ -1019,19 +1019,20 @@ func Test[aClass.name.toUpperFirst()/]EBasicInverseRemove(t *testing.T) {
 [/template]
 
 [template private generateFeatureEInverseRemoveTestImplementation( aStructuralFeature : EStructuralFeature, aClass : EClass ) ?(isMapType())]
+[let aPackage : EPackage = aClass.ePackage ]
 {
-	mockObject := [aStructuralFeature.generateTestValue(aClass.ePackage)/]
+	mockObject := [aStructuralFeature.eGenericType.generateTestValue(aPackage)/]
 	o.EBasicInverseRemove(mockObject,[aClass.getQualifiedIDName(aStructuralFeature)/],nil)
 	mock.AssertExpectationsForObjects(t, mockObject)
 	assert.True(t,o.[aStructuralFeature.getGetterName()/]().Empty())
 }
-
+[/let]
 [/template]
 
 [template private generateFeatureEInverseRemoveTestImplementation( aStructuralFeature : EStructuralFeature, aClass : EClass ) ?(isListType())]
 {
 	// initialize list with a mock object
-	mockObject := [aStructuralFeature.generateTestValue(aClass.ePackage)/]
+	mockObject := [aStructuralFeature.eGenericType.generateTestValue(aClass.ePackage)/]
 	[aStructuralFeature.generateFeatureMockAddedExpectations('mockObject',aClass)/]
 	l := o.[aStructuralFeature.getGetterName()/]()
 	l.Add(mockObject)
