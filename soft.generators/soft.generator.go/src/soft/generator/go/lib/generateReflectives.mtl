@@ -132,8 +132,8 @@
 		[else]
 		return [ecorePrefix/]ToAnyList([aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getGetterName()/]())
 		[/if]
-	[else] 
-        return [ecorePrefix/]ToAny([aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getGetterName()/]())
+	[else]
+		return [ecorePrefix/]ToAny([aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getGetterName()/]())
 	[/if]
     [/for]
     default:
@@ -177,11 +177,11 @@
         l.AddAll(newList)
 	[else]
 		newValue := [ecorePrefix/]FromAny['['/][anStructFeature.eGenericType.generateType(aPackage)/][']'/](value)
-        [aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getSetterName()/](newValue)
+		[aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getSetterName()/](newValue)
     [/if]    
 [/for]
     default:
-        [aClass.getReceiverName()/].[getUnQualifiedName(aClass.getClassExtends())/].ESetFromID(featureID, value)
+		[aClass.getReceiverName()/].[getUnQualifiedName(aClass.getClassExtends())/].ESetFromID(featureID, value)
     }
 }
 [/let]

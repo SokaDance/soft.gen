@@ -716,8 +716,8 @@ assert.Panics(t, func() { o.ESetFromID([aClass.getQualifiedIDName(anStructuralFe
 	mockEntry.On("GetValue").Return(mockValue).Once()
 	
 	// set list with new contents
-	o.ESetFromID([aClass.getQualifiedIDName(anStructuralFeature)/], mockMap)
-	assert.Equal(t, map['['/]any[']'/]any{mockKey : mockValue},o.[anStructuralFeature.getGetterName()/]().ToMap())
+	o.ESetFromID([aClass.getQualifiedIDName(anStructuralFeature)/], [ecorePrefix/]ToAnyMap['['/][anStructuralFeature.eGenericType.generateMapTypeParameters(aPackage)/][']'/](mockMap))
+	assert.Equal(t, map['['/][keyFeature.eGenericType.generateType(aPackage)/][']'/][valueFeature.eGenericType.generateType(aPackage)/]{mockKey : mockValue},o.[anStructuralFeature.getGetterName()/]().ToMap())
 	mock.AssertExpectationsForObjects(t, mockMap, mockEntry)
 [/let]
 [/let]
@@ -748,7 +748,7 @@ assert.Panics(t, func() { o.ESetFromID([aClass.getQualifiedIDName(anStructuralFe
 [/if]
 	[anStructuralFeature.generateFeatureMockAddedExpectations('mockValue',aClass)/]
 	// set list with new contents
-	o.ESetFromID([aClass.getQualifiedIDName(anStructuralFeature)/], mockList)
+	o.ESetFromID([aClass.getQualifiedIDName(anStructuralFeature)/], [ecorePrefix/]ToAnyList['['/][anStructuralFeature.eGenericType.generateListTypeParameters(aPackage)/][']'/](mockList))
 	// checks
 	assert.Equal(t, 1, o.[anStructuralFeature.getGetterName()/]().Size())
 	assert.Equal(t, mockValue, o.[anStructuralFeature.getGetterName()/]().Get(0))
