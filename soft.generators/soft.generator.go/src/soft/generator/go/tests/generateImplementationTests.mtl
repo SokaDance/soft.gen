@@ -642,6 +642,8 @@ func Test[aClass.name.toUpperFirst()/]EDerivedOperationID(t *testing.T) {
 [/template]
 
 [template private generateEGetFromIDTestImplementation(aClass : EClass)]
+[let aPackage : EPackage = aClass.ePackage]
+[let ecorePrefix : String = if not aPackage.isEcorePackage() then 'ecore.' else '' endif]
 [let features : OrderedSet(EStructuralFeature) = aClass.getEGetFeatures()->asOrderedSet()->sortedBy(name)]
 [if features->notEmpty()]
 func Test[aClass.name.toUpperFirst()/]EGetFromID(t *testing.T) {
@@ -651,15 +653,19 @@ func Test[aClass.name.toUpperFirst()/]EGetFromID(t *testing.T) {
 	[if anStructFeature.isVolatile() or ( anStructFeature.hasInitializationMethod() and anStructFeature.oclIsKindOf(EReference) and not anStructFeature.isListType() and not anStructFeature.isProxy() )  ]
 	assert.Panics(t, func() { o.EGetFromID([aClass.getQualifiedIDName(anStructFeature)/], true) })
 	assert.Panics(t, func() { o.EGetFromID([aClass.getQualifiedIDName(anStructFeature)/], false) })
-	[else]
-	assert.Equal(t, o.[anStructFeature.getGetterName()/](), o.EGetFromID([aClass.getQualifiedIDName(anStructFeature)/], true))
-	[if (not anStructFeature.isMapType() and anStructFeature.isListType() and anStructFeature.oclIsKindOf(EReference))]
-	assert.Equal(t, o.[anStructFeature.getGetterName()/]().([if not aClass.ePackage.isEcorePackage()]ecore.[/if]EObjectList).GetUnResolvedList(), o.EGetFromID([aClass.getQualifiedIDName(anStructFeature)/], false))
+	[elseif anStructFeature.isMapType()]
+	assert.Equal(t, o.[anStructFeature.getGetterName()/](), [ecorePrefix/]FromAnyMap['['/][anStructFeature.eGenericType.generateMapTypeParameters(aPackage)/][']'/](o.EGetFromID([aClass.getQualifiedIDName(anStructFeature)/], true).([ecorePrefix/]EMap['['/]any,any[']'/])))
+	[elseif anStructFeature.isListType()]
+	assert.Equal(t, o.[anStructFeature.getGetterName()/](), [ecorePrefix/]FromAnyList['['/][anStructFeature.eGenericType.generateListTypeParameters(aPackage)/][']'/](o.EGetFromID([aClass.getQualifiedIDName(anStructFeature)/], true).([ecorePrefix/]EList['['/]any[']'/])))
+	[if anStructFeature.oclIsKindOf(EReference)]
+	assert.Equal(t, o.[anStructFeature.getGetterName()/]().([ecorePrefix/]EObjectList['['/][anStructFeature.eGenericType.generateListTypeParameters(aPackage)/][']'/]).GetUnResolvedList(), [ecorePrefix/]FromAnyList['['/][anStructFeature.eGenericType.generateListTypeParameters(aPackage)/][']'/](o.EGetFromID([aClass.getQualifiedIDName(anStructFeature)/], false).([ecorePrefix/]EList['['/]any[']'/])))
 	[/if]
 	[/if]
     [/for]
 }
 [/if]
+[/let]
+[/let]
 [/let]
 [/template]
 
@@ -692,7 +698,7 @@ assert.Panics(t, func() { o.ESetFromID([aClass.getQualifiedIDName(anStructuralFe
 [let aMapClass : EClass = anStructuralFeature.eType.oclAsType(EClass)]
 [let keyFeature : EStructuralFeature = aMapClass.getEStructuralFeature('key')]
 [let valueFeature : EStructuralFeature = aMapClass.getEStructuralFeature('value')]
-	// list with a value
+	// map with a value
 	mockMap := &[ecorePrefix/]MockEMap{}
 	mockEntry := &[ecorePrefix/]MockEMapEntry{}
 	mockIterator := &[ecorePrefix/]MockEIterator{}
