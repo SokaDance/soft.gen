@@ -728,22 +728,30 @@ assert.Panics(t, func() { o.ESetFromID([aClass.getQualifiedIDName(anStructuralFe
 [/template]
 
 [template private generateFeatureESetFromIDTestImplementation(anStructuralFeature : EStructuralFeature ,aClass : EClass) ? (isListType() and oclIsKindOf(EReference))]
+[let aPackage : EPackage = aClass.ePackage]
+[let ecorePrefix : String = if not aPackage.isEcorePackage() then 'ecore.' else '' endif]
 {
 	// list with a value
-	mockValue := [anStructuralFeature.generateTestValue(aClass.ePackage)/]
-	l := [if not aClass.ePackage.isEcorePackage()]ecore.[/if]NewImmutableEList(['['/][']'/]any{mockValue})
+	mockList := [anStructuralFeature.generateTestValue(aPackage)/]
+	mockValue := [anStructuralFeature.eGenericType.generateTestValue(aPackage)/]
+	mockIterator := &[ecorePrefix/]MockEIterator['['/][anStructuralFeature.eGenericType.generateListTypeParameters(aPackage)/][']'/]{}
+	mockList.On("Iterator").Return(mockIterator).Once()	
+	mockIterator.On("HasNext").Return(true).Once()
+	mockIterator.On("Next").Return(mockValue).Once()
+	mockIterator.On("HasNext").Return(false).Once()
 [if anStructuralFeature.isProxy()]
 	mockValue.On("EIsProxy").Return(false).Once()
 [/if]
 	[anStructuralFeature.generateFeatureMockAddedExpectations('mockValue',aClass)/]
 	// set list with new contents
-	o.ESetFromID([aClass.getQualifiedIDName(anStructuralFeature)/], l)
+	o.ESetFromID([aClass.getQualifiedIDName(anStructuralFeature)/], mockList)
 	// checks
 	assert.Equal(t, 1, o.[anStructuralFeature.getGetterName()/]().Size())
 	assert.Equal(t, mockValue, o.[anStructuralFeature.getGetterName()/]().Get(0))
-	mock.AssertExpectationsForObjects(t, mockValue)	
+	mock.AssertExpectationsForObjects(t,mockList,mockIterator,mockValue)	
 }
-
+[/let]
+[/let]
 [/template]
 
 [template private generateFeatureMockAddedExpectations(anStructuralFeature : EStructuralFeature , mockName : String , aClass : EClass)]

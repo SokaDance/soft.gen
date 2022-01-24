@@ -154,9 +154,9 @@ any
 [let aPackage : EPackage = aElement.getEPackage()]
 [let aType : EGenericType = aElement.eGenericType]
 [if (aElement.isMapType())]
-[getShortQualifiedName('ecore.MockEMap', aPackage.name )/]['['/][aType.generateMapKeyType(aPackage)/],[aType.generateMapValueType(aPackage)/][']'/]
+&[getShortQualifiedName('ecore.MockEMap', aPackage.name )/]['['/][aType.generateMapKeyType(aPackage)/],[aType.generateMapValueType(aPackage)/][']'/]{}
 [elseif aElement.isListType()]
-[getShortQualifiedName('ecore.MockEList', aPackage.name )/]['['/][aType.generateListTypeParameters(aPackage)/][']'/]
+&[getShortQualifiedName('ecore.MockEList', aPackage.name )/]['['/][aType.generateListTypeParameters(aPackage)/][']'/]{}
 [else]
 [aType.generateTestValue(aPackage)/]
 [/if]
