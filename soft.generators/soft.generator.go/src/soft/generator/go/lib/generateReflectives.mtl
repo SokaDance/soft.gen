@@ -110,32 +110,32 @@
 [aClass.generateFunctionImplementationReceiver()/] EGetFromID(featureID int, resolve bool) any {
     switch featureID {
     [for (anStructFeature : EStructuralFeature | aClass.getEGetFeatures()->asOrderedSet()->sortedBy(name))]
-    case [aClass.getQualifiedIDName(anStructFeature)/]:
-	[if anStructFeature.isProxy()]
-		[if anStructFeature.isListType()]
-		list := [aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getGetterName()/]().([ecorePrefix/]EObjectList['['/][anStructFeature.eGenericType.generateListTypeParameters(aPackage)/][']'/])
+	case [aClass.getQualifiedIDName(anStructFeature)/]:
+	[if anStructFeature.isMapType()]
+		return [ecorePrefix/]ToAnyMap([aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getGetterName()/]())
+	[elseif anStructFeature.isListType()]
+		[let listType : String = anStructFeature.eGenericType.generateListTypeParameters(aPackage)]
+		[if anStructFeature.isProxy()]
+		list := [aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getGetterName()/]().([ecorePrefix/]EObjectList['['/][listType/][']'/])
 		if !resolve {
 			list = list.GetUnResolvedList()
 		}
-		return [ecorePrefix/]ToAnyObjectList(list)
+		return [ecorePrefix/]ToAnyList['['/][listType/][']'/](list)
 		[else]
+		return [ecorePrefix/]ToAnyList([aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getGetterName()/]())
+		[/if]
+		[/let]
+	[else]
+		[if anStructFeature.isProxy()]
 		if resolve {
 			return [ecorePrefix/]ToAny([aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getGetterName()/]())
 		}
 		return [ecorePrefix/]ToAny([aClass.getReceiverName()/].basic[anStructFeature.getGetterName().toUpperFirst()/]())
-		[/if]		
-	[elseif anStructFeature.isMapType()]
-		return [ecorePrefix/]ToAnyMap([aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getGetterName()/]())
-	[elseif anStructFeature.isListType()]
-		[if anStructFeature.oclIsKindOf(EReference)]
-		return [ecorePrefix/]ToAnyObjectList([aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getGetterName()/]().([ecorePrefix/]EObjectList['['/][anStructFeature.eGenericType.generateListTypeParameters(aPackage)/][']'/]))
 		[else]
-		return [ecorePrefix/]ToAnyList([aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getGetterName()/]())
-		[/if]
-	[else]
 		return [ecorePrefix/]ToAny([aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getGetterName()/]())
+		[/if]
 	[/if]
-    [/for]
+	[/for]
     default:
         return [aClass.getReceiverName()/].[getUnQualifiedName(aClass.getClassExtends())/].EGetFromID(featureID, resolve)
     }
@@ -166,12 +166,12 @@
 [for (anStructFeature : EStructuralFeature | aClass.getESetFeatures()->sortedBy(name))]
     case [aClass.getQualifiedIDName(anStructFeature)/]:
 	[if anStructFeature.isMapType()]
-		newMap := [ecorePrefix/]FromAnyMap['['/][anStructFeature.eGenericType.generateMapTypeParameters(aPackage)/][']'/](value.([ecorePrefix/]EMap['['/]any,any[']'/]))
+		newMap := [ecorePrefix/]FromAnyMap['['/][anStructFeature.eGenericType.generateMapTypeParameters(aPackage)/][']'/](value)
 		m := [aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getGetterName()/]()
 		m.Clear()
 		m.AddAll(newMap)
 	[elseif anStructFeature.isListType()]
-		newList := [ecorePrefix/]FromAnyList['['/][anStructFeature.eGenericType.generateListTypeParameters(aPackage)/][']'/](value.([ecorePrefix/]EList['['/]any[']'/]))	
+		newList := [ecorePrefix/]FromAnyList['['/][anStructFeature.eGenericType.generateListTypeParameters(aPackage)/][']'/](value)	
 		l := [aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getGetterName()/]()
 		l.Clear()
         l.AddAll(newList)

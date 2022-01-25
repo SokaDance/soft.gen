@@ -654,15 +654,15 @@ func Test[aClass.name.toUpperFirst()/]EGetFromID(t *testing.T) {
 	assert.Panics(t, func() { o.EGetFromID([aClass.getQualifiedIDName(anStructFeature)/], true) })
 	assert.Panics(t, func() { o.EGetFromID([aClass.getQualifiedIDName(anStructFeature)/], false) })
 	[elseif anStructFeature.isMapType()]
-	assert.Equal(t, o.[anStructFeature.getGetterName()/](), [ecorePrefix/]FromAnyMap['['/][anStructFeature.eGenericType.generateMapTypeParameters(aPackage)/][']'/](o.EGetFromID([aClass.getQualifiedIDName(anStructFeature)/], true).([ecorePrefix/]EMap['['/]any,any[']'/])))
+	assert.Equal(t, o.[anStructFeature.getGetterName()/](), [ecorePrefix/]FromAnyMap['['/][anStructFeature.eGenericType.generateMapTypeParameters(aPackage)/][']'/](o.EGetFromID([aClass.getQualifiedIDName(anStructFeature)/], true)))
 	[elseif anStructFeature.isListType()]
 	[if anStructFeature.oclIsKindOf(EReference)]
-	assert.Equal(t, o.[anStructFeature.getGetterName()/](), [ecorePrefix/]FromAnyObjectList['['/][anStructFeature.eGenericType.generateListTypeParameters(aPackage)/][']'/](o.EGetFromID([aClass.getQualifiedIDName(anStructFeature)/], true).([ecorePrefix/]EObjectList['['/]any[']'/])))
+	assert.Equal(t, o.[anStructFeature.getGetterName()/](), [ecorePrefix/]FromAnyList['['/][anStructFeature.eGenericType.generateListTypeParameters(aPackage)/][']'/](o.EGetFromID([aClass.getQualifiedIDName(anStructFeature)/], true)))
 	[if anStructFeature.isProxy()]
-	assert.Equal(t, o.[anStructFeature.getGetterName()/]().([ecorePrefix/]EObjectList['['/][anStructFeature.eGenericType.generateListTypeParameters(aPackage)/][']'/]).GetUnResolvedList(), [ecorePrefix/]FromAnyObjectList['['/][anStructFeature.eGenericType.generateListTypeParameters(aPackage)/][']'/](o.EGetFromID([aClass.getQualifiedIDName(anStructFeature)/], false).([ecorePrefix/]EObjectList['['/]any[']'/])))
+	assert.Equal(t, o.[anStructFeature.getGetterName()/]().([ecorePrefix/]EObjectList['['/][anStructFeature.eGenericType.generateListTypeParameters(aPackage)/][']'/]).GetUnResolvedList(), [ecorePrefix/]FromAnyList['['/][anStructFeature.eGenericType.generateListTypeParameters(aPackage)/][']'/](o.EGetFromID([aClass.getQualifiedIDName(anStructFeature)/], false)))
 	[/if]
 	[else]
-	assert.Equal(t, o.[anStructFeature.getGetterName()/](), [ecorePrefix/]FromAnyList['['/][anStructFeature.eGenericType.generateListTypeParameters(aPackage)/][']'/](o.EGetFromID([aClass.getQualifiedIDName(anStructFeature)/], true).([ecorePrefix/]EList['['/]any[']'/])))
+	assert.Equal(t, o.[anStructFeature.getGetterName()/](), [ecorePrefix/]FromAnyList['['/][anStructFeature.eGenericType.generateListTypeParameters(aPackage)/][']'/](o.EGetFromID([aClass.getQualifiedIDName(anStructFeature)/], true)))
 	[/if]
 	[/if]
     [/for]
