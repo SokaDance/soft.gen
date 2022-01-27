@@ -168,7 +168,11 @@ any
 [template public generateTestValue(anEGenericType : EGenericType, aPackage : EPackage ) post (trim())]
 [if (anEGenericType.oclIsUndefined() or anEGenericType.eClassifier.oclIsUndefined())]
 [else]
-[format(anEGenericType.eClassifier.getTestValue(aPackage),anEGenericType.eTypeArguments->collect(p | p.generateType(aPackage)))/]
+	[let type : String = anEGenericType.eClassifier.getTestValue(aPackage)]
+	[let typeArgs : Sequence(String) = anEGenericType.eTypeArguments->collect(p | p.generateType(aPackage).toString())]
+	[format(type,typeArgs)/]
+	[/let]
+	[/let]
 [/if]
 [/template]
 
