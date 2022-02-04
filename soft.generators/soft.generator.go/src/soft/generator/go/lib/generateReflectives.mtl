@@ -166,15 +166,15 @@
 [for (anStructFeature : EStructuralFeature | aClass.getESetFeatures()->sortedBy(name))]
     case [aClass.getQualifiedIDName(anStructFeature)/]:
 	[if anStructFeature.isMapType()]
-		newMap := [ecorePrefix/]FromAnyMap['['/][anStructFeature.eGenericType.generateMapTypeParameters(aPackage)/][']'/](value)
+		newCollection := [ecorePrefix/]FromAnyCollection['['/]any[']'/](value)
 		m := [aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getGetterName()/]()
 		m.Clear()
-		m.AddAll(newMap)
+		m.AddAll(newCollection)
 	[elseif anStructFeature.isListType()]
-		newList := [ecorePrefix/]FromAnyList['['/][anStructFeature.eGenericType.generateListTypeParameters(aPackage)/][']'/](value)	
+		newCollection := [ecorePrefix/]FromAnyCollection['['/][anStructFeature.eGenericType.generateListTypeParameters(aPackage)/][']'/](value)	
 		l := [aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getGetterName()/]()
 		l.Clear()
-        l.AddAll(newList)
+        l.AddAll(newCollection)
 	[else]
 		newValue := [ecorePrefix/]FromAny['['/][anStructFeature.eGenericType.generateType(aPackage)/][']'/](value)
 		[aClass.getReceiverName()/].as[aClass.getInterfaceName()/]().[anStructFeature.getSetterName()/](newValue)
