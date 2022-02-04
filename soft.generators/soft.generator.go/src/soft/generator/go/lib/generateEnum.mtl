@@ -28,7 +28,7 @@
 
 package [aPackage.name/]
 
-type [enumName/] int32
+type [enumName/] int
 
 const (
 [for (literal : EEnumLiteral | literals)]
