@@ -270,11 +270,20 @@ func [testMethodName/](t *testing.T) {
 // [aStructuralFeature.getGetterName()/] get the value of [aStructuralFeature.getVariableName()/]
 [aClass.generateFunctionImplementationReceiver()/] [aStructuralFeature.getGetterName()/]() [aStructuralFeature.generateType()/] {
 [let aPackage : EPackage =  aClass.ePackage ]
+[let ecorePrefix : String = if not aPackage.isEcorePackage() then 'ecore.' else '' endif]
 [let varName : String = aStructuralFeature.getVariableName() ]
 [let receiverName : String = aClass.getReceiverName()]
 [if isReflectiveDelegation()]
-	result, _ := [receiverName/].EGetFromID([aClass.getFeatureIDName(aStructuralFeature)/] , true)[if aStructuralFeature.eType.getType() <> 'any'].([aStructuralFeature.generateType()/])[/if]
-	return result 
+	v := [receiverName/].EGetFromID([aClass.getFeatureIDName(aStructuralFeature)/] , true)
+	[if aStructuralFeature.isMapType()]
+	return [ecorePrefix/]FromAnyMap['['/][aStructuralFeature.eGenericType.generateMapTypeParameters(aPackage)/][']'/](v)
+	[elseif aStructuralFeature.isListType()]
+	return [ecorePrefix/]FromAnyList['['/][aStructuralFeature.eGenericType.generateListTypeParameters(aPackage)/][']'/](v)
+	[elseif aStructuralFeature.eType.getType() <> 'any']
+	return [ecorePrefix/]FromAny['['/][aStructuralFeature.generateType()/][']'/](v)
+	[else]
+	return v
+	[/if]
 [elseif isContainer()]
     if [receiverName/].EContainerFeatureID() == [aClass.getFeatureIDName(aStructuralFeature)/] {
         return [receiverName/].EContainer().([aStructuralFeature.generateType()/]);
@@ -292,21 +301,21 @@ func [testMethodName/](t *testing.T) {
         [if isContains()]
             var notifications [if not aPackage.isEcorePackage()]ecore.[/if]ENotificationChain
             [if not isBidirectional()]
-            notifications = [oldVarName/].([if not aPackage.isEcorePackage()]ecore.[/if]EObjectInternal).EInverseRemove( [receiverName/], [if not aPackage.isEcorePackage()]ecore.[/if]EOPPOSITE_FEATURE_BASE - [aClass.getFeatureIDName(aStructuralFeature)/] , notifications )
+            notifications = [oldVarName/].([ecorePrefix/]EObjectInternal).EInverseRemove( [receiverName/], [if not aPackage.isEcorePackage()]ecore.[/if]EOPPOSITE_FEATURE_BASE - [aClass.getFeatureIDName(aStructuralFeature)/] , notifications )
             [else]
                 [let reverseFeature : EStructuralFeature = aStructuralFeature.oclAsType(EReference).eOpposite]
                 [let reverseClass : EClass = reverseFeature.eContainingClass]
-            notifications = [oldVarName/].([if not aPackage.isEcorePackage()]ecore.[/if]EObjectInternal).EInverseRemove( [receiverName/], [reverseClass.getFeatureIDName(reverseFeature)/] , notifications )
+            notifications = [oldVarName/].([ecorePrefix/]EObjectInternal).EInverseRemove( [receiverName/], [reverseClass.getFeatureIDName(reverseFeature)/] , notifications )
                 [/let]
                 [/let]
             [/if]
             if [newVarName/].([if not aPackage.isEcorePackage()]ecore.[/if]EObjectInternal).EInternalContainer() == nil {
             [if not isBidirectional()]
-            notifications = [newVarName/].([if not aPackage.isEcorePackage()]ecore.[/if]EObjectInternal).EInverseAdd( [receiverName/], [if not aPackage.isEcorePackage()]ecore.[/if]EOPPOSITE_FEATURE_BASE - [aClass.getFeatureIDName(aStructuralFeature)/] , notifications )
+            notifications = [newVarName/].([ecorePrefix/]EObjectInternal).EInverseAdd( [receiverName/], [if not aPackage.isEcorePackage()]ecore.[/if]EOPPOSITE_FEATURE_BASE - [aClass.getFeatureIDName(aStructuralFeature)/] , notifications )
             [else]
                 [let reverseFeature : EStructuralFeature = aStructuralFeature.oclAsType(EReference).eOpposite]
                 [let reverseClass : EClass = reverseFeature.eContainingClass]
-            notifications = [newVarName/].([if not aPackage.isEcorePackage()]ecore.[/if]EObjectInternal).EInverseAdd( [receiverName/], [reverseClass.getFeatureIDName(reverseFeature)/] , notifications )
+            notifications = [newVarName/].([ecorePrefix/]EObjectInternal).EInverseAdd( [receiverName/], [reverseClass.getFeatureIDName(reverseFeature)/] , notifications )
                 [/let]
                 [/let]
             [/if]
@@ -316,7 +325,7 @@ func [testMethodName/](t *testing.T) {
             }
         [/if]
             if [receiverName/].ENotificationRequired() {
-                [receiverName/].ENotify( [if not aPackage.isEcorePackage()]ecore.[/if]NewNotificationByFeatureID([receiverName/], [if not aPackage.isEcorePackage()]ecore.[/if]RESOLVE, [aClass.getFeatureIDName(aStructuralFeature)/], [oldVarName/], [newVarName/], [if not aPackage.isEcorePackage()]ecore.[/if]NO_INDEX) )
+                [receiverName/].ENotify([ecorePrefix/]NewNotificationByFeatureID([receiverName/], [if not aPackage.isEcorePackage()]ecore.[/if]RESOLVE, [aClass.getFeatureIDName(aStructuralFeature)/], [oldVarName/], [newVarName/], [if not aPackage.isEcorePackage()]ecore.[/if]NO_INDEX) )
             }
         }
         [/let]
@@ -353,6 +362,7 @@ func [testMethodName/](t *testing.T) {
 [else]
     panic("[aStructuralFeature.getGetterName()/] not implemented")
 [/if]
+[/let]
 [/let]
 [/let]
 [/let]
