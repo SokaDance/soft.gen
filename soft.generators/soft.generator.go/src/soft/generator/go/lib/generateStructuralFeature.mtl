@@ -266,6 +266,13 @@ func [testMethodName/](t *testing.T) {
 [/let]
 [/template]
 
+[query private isEnumType(aTypeElement : ETypedElement) : Boolean =
+	if aTypeElement.eGenericType.oclIsUndefined() then false
+	else
+		aTypeElement.eGenericType.eClassifier.oclIsKindOf(EEnum)
+	endif 
+/]
+
 [template public generateGetImplementation(aStructuralFeature : EStructuralFeature, aClass : EClass)]
 // [aStructuralFeature.getGetterName()/] get the value of [aStructuralFeature.getVariableName()/]
 [aClass.generateFunctionImplementationReceiver()/] [aStructuralFeature.getGetterName()/]() [aStructuralFeature.generateType()/] {
@@ -279,6 +286,8 @@ func [testMethodName/](t *testing.T) {
 	return [ecorePrefix/]FromAnyMap['['/][aStructuralFeature.eGenericType.generateMapTypeParameters(aPackage)/][']'/](v)
 	[elseif aStructuralFeature.isListType()]
 	return [ecorePrefix/]FromAnyList['['/][aStructuralFeature.eGenericType.generateListTypeParameters(aPackage)/][']'/](v)
+	[elseif aStructuralFeature.isEnumType()]
+	return [aStructuralFeature.generateType()/](v.(int))
 	[elseif aStructuralFeature.eType.getType() <> 'any']
 	return [ecorePrefix/]FromAny['['/][aStructuralFeature.generateType()/][']'/](v)
 	[else]
@@ -452,7 +461,11 @@ func [testMethodName/](t *testing.T) {
 // [methodName/] set the value of [varName/]
 [aClass.generateFunctionImplementationReceiver()/] [methodName/]( [newVarName/] [aStructuralFeature.generateType()/] ) {
 [if isReflectiveDelegation()]
+	[if aStructuralFeature.isEnumType()]
+	[receiverName/].ESetFromID([aClass.getFeatureIDName(aStructuralFeature)/],int([newVarName/]))
+	[else]
 	[receiverName/].ESetFromID([aClass.getFeatureIDName(aStructuralFeature)/],[newVarName/])
+	[/if]
 [elseif not isVolatile()]
     [if isContainer()]
     if ( [newVarName/] != [receiverName/].EInternalContainer() || ([newVarName/] != nil && [receiverName/].EContainerFeatureID() !=  [aClass.getFeatureIDName(aStructuralFeature)/])) {
