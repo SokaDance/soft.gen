@@ -725,7 +725,7 @@ assert.Panics(t, func() { o.ESetFromID([aClass.getQualifiedIDName(anStructuralFe
 	
 	// set list with new contents
 	o.ESetFromID([aClass.getQualifiedIDName(anStructuralFeature)/], [ecorePrefix/]ToAnyMap['['/][anStructuralFeature.eGenericType.generateMapTypeParameters(aPackage)/][']'/](mockMap))
-	assert.Equal(t, map['['/][keyFeature.eGenericType.generateType(aPackage)/][']'/][valueFeature.eGenericType.generateType(aPackage)/]{mockKey : mockValue},o.[anStructuralFeature.getGetterName()/]().ToMap())
+	assert.Equal(t, map['['/]any[']'/]any{mockKey : mockValue},o.[anStructuralFeature.getGetterName()/]().ToMap())
 	mock.AssertExpectationsForObjects(t, mockMap, mockEntry)
 [/let]
 [/let]
