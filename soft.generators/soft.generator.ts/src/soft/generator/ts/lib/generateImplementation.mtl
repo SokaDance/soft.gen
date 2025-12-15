@@ -19,6 +19,7 @@
 
 [import soft::generator::ts::generateCommon/]
 [import soft::generator::ts::generateElement/]
+[import soft::generator::ts::generateModule]
 [import soft::generator::ts::generateType/]
 [import soft::generator::ts::lib::generateCommon/]
 [import soft::generator::ts::lib::generateOperation/]
@@ -59,6 +60,28 @@
 }]
 [file (aPackage.getPackageDirectory() + '/' + aClass.getImplementationFileName( aClass.name ), false, 'UTF-8')]
 [fileComment()/]
+
+[if isDebug()]
+// module : [aPackage.getImplementationModule()/]
+// path : [getModulePath(aPackage.getImplementationModule())/]
+// namespace : [getModuleNamespace(aPackage.getImplementationModule())/]
+
+// refs
+[for (cls : EClassifier | aClass.getReferencedTypes())]
+// [cls.getQualifiedInterfaceIdentifier()/]
+[/for]
+
+// types
+[for (type : String| types)]
+// [type/]
+[/for]
+
+// modules
+[for (mod : OclAny | modules.mapKeys())]
+// [mod/] => [modules.mapGet(mod)/]
+[/for]
+[/if]
+
 
 [aClass.generateImports('implementation', types, modules)/]
 
