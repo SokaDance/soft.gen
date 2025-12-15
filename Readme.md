@@ -74,6 +74,7 @@ If you want to bootstrap generators yourself, you'll need:
 If you want to debug generators with an Eclipse IDE, you'll need:
 - [Eclipse IDE Modeling Tools](https://www.eclipse.org/downloads/)
 - [Eclipse IDE integration for Maven](https://download.eclipse.org/technology/m2e/releases/latest/)
+  - maven should be configured with github as available maven repository by adding [settings.xml](settings.m2.xml) in ${user}/.m2 directory
 - [Annotation Processor in IDE](https://immutables.github.io/apt.html)
 - [Acceleo](https://download.eclipse.org/acceleo/updates/releases)
 
