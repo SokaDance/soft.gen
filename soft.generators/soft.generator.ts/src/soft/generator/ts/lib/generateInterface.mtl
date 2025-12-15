@@ -30,22 +30,23 @@
 	aPackage : EPackage = aClass.ePackage;
 	interfaceName : String = aClass.getInterfaceName(); 
     interfaceExtends : Sequence(String) = aClass.getInterfaceExtends();
-    isDiamond : Boolean = interfaceExtends->size() > 1;
+    isDiamond : Boolean = aClass.eSuperTypes->size() > 1;
 	types : Set(String) = Set{  interfaceExtends
-								, (if isDiamond then aClass.eSuperTypes.getReferencedTypes() else aClass.getReferencedTypes() endif)
+							 , (if isDiamond then aClass.eSuperTypes.getReferencedTypes() else aClass.getReferencedTypes() endif)
 									->select( cls | not cls.oclIsTypeOf(EClass) or not cls.oclAsType(EClass).isMapEntry())
-									->collect( cls | cls.getQualifiedInterfaceIdentifier())
-								, Set{
-										if aClass.requiresList() then Set{ 'EList' } else Set{} endif,
-										if aClass.requiresMap() then Set{ 'EMap' } else Set{} endif
-									}->flatten()->collect(t | ecorePackage.getQualifiedInterfaceIdentifier(t))
-								}->flatten()->select(s | s <> '' and s <> aClass.getQualifiedInterfaceIdentifier() );
+									->collect( cls | cls.getType())->asSet()
+							 , Set{
+									if aClass.requiresList() then Set{ 'EList' } else Set{} endif,
+									if aClass.requiresMap() then Set{ 'EMap' } else Set{} endif
+								}->flatten()->collect(t | ecorePackage.getQualifiedInterfaceIdentifier(t))
+							 }->flatten()->select(s | s <> '' and s <> aClass.getQualifiedInterfaceIdentifier() );
 	modules : OclAny = aClass.getModules('interface',types);
 }]
 [file (aPackage.getPackageDirectory() + '/' + aClass.getInterfaceFileName( aClass.name ), false, 'UTF-8')]
 [fileComment()/]
 
 [if isDebug()]
+// class : [aClass.getQualifiedInterfaceIdentifier()/]
 // module : [aPackage.getInterfaceModule()/]
 // path : [getModulePath(aPackage.getInterfaceModule())/]
 // namespace : [getModuleNamespace(aPackage.getInterfaceModule())/]
