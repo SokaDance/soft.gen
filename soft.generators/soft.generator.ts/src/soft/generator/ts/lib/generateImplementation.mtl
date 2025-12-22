@@ -103,6 +103,45 @@ export class [className/] extends [getImportedIdentifier(classExtend, modules)/]
 	[properties.generatePropertyImplementation(aClass,modules)/]	
 [/let]
 
+[if aClass.isMapEntry()]
+[let keyFeature : EStructuralFeature = aClass.getEStructuralFeature('key')]
+[let valueFeature : EStructuralFeature = aClass.getEStructuralFeature('value')]
+[if keyFeature.getGetterName() <> 'getKey']
+	getKey() : [keyFeature.generateType(modules)/] {
+    	return this.[keyFeature.getGetterName()/]()
+	}
+[/if]
+[if keyFeature.getSetterName() <> 'setKey']
+	setKey(key:  [keyFeature.generateType(modules)/]) {
+[if keyFeature.isListType()]
+		const l = this.[keyFeature.getGetterName()/]()
+		l.clear() 
+		l.addAll(key)
+[else]
+    	this.[keyFeature.getSetterName()/](key)
+[/if]
+	}
+[/if]
+[if valueFeature.getGetterName() <> 'getValue']
+	getValue():  [valueFeature.generateType(modules)/] {
+    	return this.[valueFeature.getGetterName()/]()
+	}
+[/if]
+[if valueFeature.getSetterName() <> 'setValue']
+	setValue(value: [valueFeature.generateType(modules)/]) {
+[if valueFeature.isListType()]
+		const l = this.[valueFeature.getGetterName()/]()
+		l.clear()
+		l.addAll(value)
+[else]
+    	this.[valueFeature.getSetterName()/](value)
+[/if]
+	}
+[/if]
+[/let]
+[/let]
+[/if]
+
     [features.generateMethodsImplementation(aClass,modules)/]
 
     [operations.generateImplementation(aClass,modules)/]
