@@ -32,7 +32,7 @@
     className : String = aClass.getImplementationName();
     classExtend : String = aClass.getClassExtends(); 
     classImplement : String = aClass.getQualifiedInterfaceIdentifier();
-	features : Collection(EStructuralFeature) = aClass.getImplementedFeatures()->sortedBy( getVariableName() );
+	features : OrderedSet(EStructuralFeature) = aClass.getImplementedFeatures()->sortedBy( getVariableName() );
     variableFeatures : Collection(EStructuralFeature) = features->select(isField());
     initializerFeatures : Collection(EStructuralFeature) = features->select(hasInitializationMethod());
     operations : Collection(EOperation) = aClass.getImplementedOperations()->sortedBy( getOperationName());
@@ -86,7 +86,7 @@
 [aClass.generateImports('implementation', types, modules)/]
 
 export class [className/] extends [getImportedIdentifier(classExtend, modules)/] implements [getImportedIdentifier(classImplement,modules)/] {
-[let dataDeclarationFeatures : Set(EStructuralFeature) = features->select( isField() )]
+[let dataDeclarationFeatures : OrderedSet(EStructuralFeature) = features->select(isField())->asOrderedSet()->sortedBy(getVariableName())]
     [dataDeclarationFeatures.generateVariableDeclaration(modules)/]
 [/let]
 
