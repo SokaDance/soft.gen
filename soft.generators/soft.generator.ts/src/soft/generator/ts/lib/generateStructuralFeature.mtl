@@ -70,12 +70,23 @@ protected [aStructuralFeature.getVariableName()/]: [aStructuralFeature.generateT
 
 [/template]
 
-[template private getMapConstructor( aStructuralFeature : EStructuralFeature, aClass : EClass, modules : OclAny) post(trim()){
+[template private getMapConstructor( anStructuralFeature : EStructuralFeature, aClass : EClass, modules : OclAny) post(trim())]
+[/template]
+
+[template private getMapConstructor( anEReference : EReference, aClass : EClass, modules : OclAny) post(trim()){
 	aPackage : EPackage = aClass.ePackage;
-	aClassifier : EClassifier = aStructuralFeature.eType;
-	aType : EGenericType = aStructuralFeature.eGenericType;
+	aClassifier : EClassifier = anEReference.eType;
+	aType : EGenericType = anEReference.eGenericType;
 }]
-new [if not aPackage.isEcorePackage()]ecore.[/if]BasicEObjectMap<[aType.generateMapTypeParameters(modules)/]>([if aClassifier.ePackage.name <> aClass.ePackage.name][aClassifier.ePackage.name/].[/if]get[aClassifier.ePackage.getInterfaceName()/]().[aClassifier.getReflectiveGetterName()/]())
+[if anEReference.eOpposite.oclIsUndefined() ]
+new [if not aPackage.isEcorePackage()]ecore.[/if]BasicEObjectMap<[aType.generateMapTypeParameters(modules)/]>([if aClassifier.ePackage.name <> aClass.ePackage.name][aClassifier.ePackage.name/].[/if]get[aClassifier.ePackage.getInterfaceName()/]().[aClassifier.getReflectiveGetterName()/](), this, [aClass.getImportedIDName(anEReference,modules)/], -1,[anEReference.isUnSettable()/])
+[else]
+	[let reverseFeature :EReference = anEReference.eOpposite ]
+    [let reverseClass :EClass = reverseFeature.eContainingClass ]
+new [if not aPackage.isEcorePackage()]ecore.[/if]BasicEObjectMap<[aType.generateMapTypeParameters(modules)/]>([if aClassifier.ePackage.name <> aClass.ePackage.name][aClassifier.ePackage.name/].[/if]get[aClassifier.ePackage.getInterfaceName()/]().[aClassifier.getReflectiveGetterName()/](), this, [reverseClass.getImportedIDName(anEReference,modules)/], -1,[anEReference.isUnSettable()/])
+	[/let]
+	[/let]
+[/if]
 [/template]
 
 [template private getListConstructor( aStructuralFeature : EStructuralFeature , aClass : EClass, modules : OclAny) post(trim())]
